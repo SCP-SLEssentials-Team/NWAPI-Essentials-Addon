@@ -4,13 +4,13 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using PluginAPI.Core;
+using RemoteAdmin;
 
 namespace NWAPI_Essentials.Commands
 {
     internal class AdminLog : ICommand
     {
-        private string _log = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK";
+        private string _log = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL";
         public static AdminLog Instance { get; } = new AdminLog();
         public string Command { get; } = "Log";
         public string[] Aliases { get; } = { "L" };
@@ -20,23 +20,24 @@ namespace NWAPI_Essentials.Commands
         {
             if (!sender.CheckPermission(PlayerPermissions.Overwatch))
             {
-                response = "You don't have permission to use this command! (Permission name: Overwatch)";
+                response = "У вас нет разрешения на эту команду! (Permission name: Overwatch)";
                 return false;
             }
 
-            foreach (Player ply in Player.GetPlayers())
+            string message = string.Join(" ", arguments.ToArray());
+            var playerSender = sender as PlayerCommandSender;
+            if (playerSender != null)
             {
-                string message = string.Join(" ", arguments.ToArray());
-                using (HttpClient client = new HttpClient())
-                {
-                    var content = new StringContent(JsonConvert.SerializeObject(new { content = $"{ply.Nickname} {message}" }), Encoding.UTF8, "application/json");
-                    var result = client.PostAsync(_log, content).Result;
-                    response = $"Message sent!";
-                    return true;
-                }
+                message += $" ({playerSender.Nickname})";
             }
-            response = null;
-            return true;
+
+            using (HttpClient client = new HttpClient())
+            {
+                var content = new StringContent(JsonConvert.SerializeObject(new { content = message }), Encoding.UTF8, "application/json");
+                var result = client.PostAsync(_log, content).Result;
+                response = $"Message sent!";
+                return true;
+            }
         }
     }
 }
