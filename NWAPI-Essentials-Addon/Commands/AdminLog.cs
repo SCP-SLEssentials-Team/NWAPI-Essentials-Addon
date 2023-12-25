@@ -14,13 +14,13 @@ namespace NWAPI_Essentials.Commands
         public static AdminLog Instance { get; } = new AdminLog();
         public string Command { get; } = "Log";
         public string[] Aliases { get; } = { "L" };
-        public string Description { get; } = "Log's for SCPSL";
+        public string Description { get; } = "Logs for SCPSL";
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (!sender.CheckPermission(PlayerPermissions.Overwatch))
             {
-                response = "У вас нет разрешения на эту команду! (Permission name: Overwatch)";
+                response = "You don't have permission to use this command! (Permission name: Overwatch)";
                 return false;
             }
 

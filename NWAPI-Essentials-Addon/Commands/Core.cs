@@ -1,5 +1,6 @@
 ﻿using CommandSystem;
 using NWAPI_Essentials.Commands;
+using NWAPI_Essentials_Addon.Commands;
 using System;
 
 namespace NWAPI_Essentials_NWAPI_Essentials_Addon.Commands
@@ -14,6 +15,7 @@ namespace NWAPI_Essentials_NWAPI_Essentials_Addon.Commands
             public sealed override void LoadGeneratedCommands()
             {
                 RegisterCommand(AdminLog.Instance);
+                RegisterCommand(Warn.Instance);
             }
 
             protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)

@@ -8,5 +8,8 @@ namespace NWAPI_Essentials_Addon
         [Description("Active Essentials Addon?.")]
 
         public bool IsEnabled { get; set; } = true;
+        [Description("Active auto log bans?.")]
+
+        public bool log_bans { get; set; } = false;
     }
 }
