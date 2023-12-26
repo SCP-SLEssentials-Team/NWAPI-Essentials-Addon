@@ -1,16 +1,15 @@
 ﻿using CommandSystem;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using RemoteAdmin;
+using System.Net.Http;
 
 namespace NWAPI_Essentials.Commands
 {
     internal class AdminLog : ICommand
     {
-        private string _log = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL";
+        private string _webhookUrl = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL";
+
         public static AdminLog Instance { get; } = new AdminLog();
         public string Command { get; } = "Log";
         public string[] Aliases { get; } = { "L" };
@@ -26,18 +25,34 @@ namespace NWAPI_Essentials.Commands
 
             string message = string.Join(" ", arguments.ToArray());
             var playerSender = sender as PlayerCommandSender;
-            if (playerSender != null)
-            {
-                message += $" ({playerSender.Nickname})";
-            }
+            var user = playerSender.Nickname;
 
-            using (HttpClient client = new HttpClient())
+            using (var httpClient = new HttpClient())
             {
-                var content = new StringContent(JsonConvert.SerializeObject(new { content = message }), Encoding.UTF8, "application/json");
-                var result = client.PostAsync(_log, content).Result;
-                response = $"Message sent!";
-                return true;
+                var payload = new
+                {
+                    content = message,
+                    username = user,
+                };
+
+                var jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                var httpContent = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+
+                var responseTask = httpClient.PostAsync(_webhookUrl, httpContent);
+                responseTask.Wait();
+
+                if (responseTask.Result.IsSuccessStatusCode)
+                {
+                    response = "Message sent!";
+                    return true;
+                }
+                else
+                {
+                    response = "Failed to send message.";
+                    return false;
+                }
             }
         }
     }
 }
+

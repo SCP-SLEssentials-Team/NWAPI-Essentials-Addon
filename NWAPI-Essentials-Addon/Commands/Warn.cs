@@ -1,12 +1,9 @@
 ﻿using CommandSystem;
-using Newtonsoft.Json;
-using NWAPI_Essentials.Commands;
 using PluginAPI.Core;
 using RemoteAdmin;
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 
 namespace NWAPI_Essentials_Addon.Commands
 {
@@ -50,23 +47,31 @@ namespace NWAPI_Essentials_Addon.Commands
             var playerSender = sender as PlayerCommandSender;
             string ply = playerSender.Nickname;
 
-            var json = new
+            player.SendBroadcast($"<color=red>You received a warn for {message}", 5);
+            using (var httpClient = new HttpClient())
             {
-                NickName = ply,
-                warn = "warned",
-                WarnedUser = player.Nickname,
-                WarnedUserSteamID64 = player.UserId,
-                reason = $"for {message}"
-            };
+                var payload = new
+                {
+                    username = ply,
+                    content = $"{player.Nickname}, {player.UserId}, received a warning for {message}",
+                };
 
-            player.SendBroadcast($"<color=red>You warned for {message}</color>", 5);
-            using (var client = new HttpClient())
-            {
-                var jsonData = JsonConvert.SerializeObject(json);
-                var content = new StringContent(JsonConvert.SerializeObject(new { content = jsonData }), Encoding.UTF8, "application/json");
-                var result = client.PostAsync(_log, content).Result;
-                response = $"Message sent!";
-                return true;
+                var jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                var httpContent = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+
+                var responseTask = httpClient.PostAsync(_log, httpContent);
+                responseTask.Wait();
+
+                if (responseTask.Result.IsSuccessStatusCode)
+                {
+                    response = "Message sent!";
+                    return true;
+                }
+                else
+                {
+                    response = "Failed to send message.";
+                    return false;
+                }
             }
         }
     }

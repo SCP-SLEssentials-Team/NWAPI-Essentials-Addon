@@ -3,8 +3,6 @@ using PluginAPI.Enums;
 using PluginAPI.Core;
 using System.Net.Http;
 using PluginAPI.Core.Interfaces;
-using Newtonsoft.Json;
-using System.Text;
 using System;
 
 namespace NWAPI_Essentials_Addon.Event
@@ -19,29 +17,26 @@ namespace NWAPI_Essentials_Addon.Event
         {
             if (player != null)
             {
-                var serverName = "Essentials-Test";
+                var serverName = "Your Server Name";
                 var bannerNickname = player;
 
-                var json = new
+                using (var httpClient = new HttpClient())
                 {
-                    Nickname = bannedPlayer.Nickname,
-                    Reason = reason,
-                    Duration = duration,
-                    Server = serverName,
-                    BannedUser = bannerNickname.Nickname,
-                    SteamID64BannedUser = bannerNickname.UserId,
-                    IPadressBannedUser = bannerNickname.IpAddress
-                };
-                using (var client = new HttpClient())
-                {
-                    var jsonData = JsonConvert.SerializeObject(json);
-                    var content = new StringContent(JsonConvert.SerializeObject(new { content = jsonData }), Encoding.UTF8, "application/json");
-                    var result = client.PostAsync("https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL", content).Result;
+                    var payload = new
+                    {
+                        username = bannedPlayer.Nickname,
+                        content = bannerNickname.Nickname, bannerNickname.UserId, bannerNickname.IpAddress, serverName, reason, duration
+                    };
+
+                    var jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                    var httpContent = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+
+                    var responseTask = httpClient.PostAsync("https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL", httpContent);
+                    responseTask.Wait();
                 }
-            }
-            else
-            {
-                Log.Error("Player is null");
+                {
+                    Log.Debug("player in null");
+                }
             }
         }
     }
