@@ -8,7 +8,7 @@ namespace NWAPI_Essentials.Commands
 {
     internal class AdminLog : ICommand
     {
-        private string _webhookUrl = "https://discord.com/api/webhooks/1188517848033792121/m_L0VSa2YoUnwD_6Ev1Z3oPUb0MK0vBWsyiPCQjSH0-kr0gC7lFYhLgxJA0usKhWKVqT";
+        private string _webhookUrl = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL";
 
         public static AdminLog Instance { get; } = new AdminLog();
         public string Command { get; } = "Log";

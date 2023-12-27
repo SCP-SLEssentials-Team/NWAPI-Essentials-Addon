@@ -9,7 +9,7 @@ namespace NWAPI_Essentials_Addon.Commands
 {
     internal class Warn : ICommand
     {
-        private const string _log = "https://discord.com/api/webhooks/1126050696148566096/NO1dxGsIDqu40oc2HqUGyUZlfA0DAm6sw9-Oty3cGEQ-2EZpKqQjyYP_oInCPeHxZRez";
+        private const string _log = "https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL";
         public static Warn Instance { get; } = new Warn();
         public string Command => "Warn";
         public string[] Aliases => new[] { "W" };

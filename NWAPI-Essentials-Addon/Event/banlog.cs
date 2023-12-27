@@ -31,7 +31,7 @@ namespace NWAPI_Essentials_Addon.Event
                     var jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
                     var httpContent = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
 
-                    var responseTask = httpClient.PostAsync("https://discord.com/api/webhooks/1126050696148566096/NO1dxGsIDqu40oc2HqUGyUZlfA0DAm6sw9-Oty3cGEQ-2EZpKqQjyYP_oInCPeHxZRez", httpContent);
+                    var responseTask = httpClient.PostAsync("https://discord.com/api/webhooks/ADD_YOUR_WEBHOOK_URL", httpContent);
                     responseTask.Wait();
                 }
                 {
